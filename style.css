@@ -5,9 +5,7 @@
 }
 
 body {
-  background: black;
-  color: white;
-  overflow-x: hidden;
+  height: calc(100svh * VARIABLENWERT); /* z. B. JS oder hardcoded */
 }
 
 /* MOBILE FIRST */
@@ -21,10 +19,11 @@ body {
   scroll-snap-align: start;
 }
 
-.slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.slide {
+  position: fixed;
+  inset: 0;
+  height: 100svh; /* NICHT 100vh */
+  width: 100vw;
 }
 
 /* DESKTOP */
