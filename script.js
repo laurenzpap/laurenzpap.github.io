@@ -1,17 +1,15 @@
-// --- 1️⃣ Liste deiner Bilder ---
 const images = [
   "images/01.jpg",
   "images/02.jpg",
   "images/03.jpg"
 ];
 
-// --- 2️⃣ Galerie erstellen ---
 const gallery = document.getElementById("gallery");
 
+// Z-Index: erstes Bild oben
 images.forEach((src, index) => {
   const section = document.createElement("section");
   section.className = "slide";
-  // Erstes Bild oben, damit Scrollrichtung korrekt ist
   section.style.zIndex = images.length - index;
 
   const img = document.createElement("img");
@@ -21,14 +19,12 @@ images.forEach((src, index) => {
   gallery.appendChild(section);
 });
 
-// --- 3️⃣ Desktop-Check ---
 const isDesktop = window.matchMedia("(min-width: 768px)").matches;
 
 if (isDesktop) {
   const slides = document.querySelectorAll(".slide");
   const total = slides.length;
 
-  // Body-Höhe für Scroll
   document.body.style.height = `${total * 100}vh`;
 
   window.addEventListener("scroll", () => {
@@ -41,19 +37,14 @@ if (isDesktop) {
       const end = (i + 1) / total;
 
       if (progress >= start && progress <= end) {
-        // 🔹 lokal progress 0 → Bild komplett sichtbar, 1 → Bild komplett verschwunden
         const local = (progress - start) / (end - start);
-
-        // Bild wird MIT der Scrollrichtung abgeschnitten
-        // (von unten nach oben)
-        slide.style.clipPath = `inset(${0}% 0 ${local * 100}% 0)`;
+        // 🔹 bottom-Wert wächst mit Scroll, top = 0
+        slide.style.clipPath = `inset(0 0 ${local * 100}% 0)`;
       } else if (progress > end) {
-        slide.style.clipPath = "inset(0 0 100% 0)"; // komplett abgeschnitten
+        slide.style.clipPath = "inset(0 0 100% 0)";
       } else {
-        slide.style.clipPath = "inset(0 0 0 0)"; // komplett sichtbar
+        slide.style.clipPath = "inset(0 0 0 0)";
       }
     });
   });
 }
-
-// Mobile: scroll-snap übernimmt Fullscreen-Slides
