@@ -21,11 +21,11 @@ images.forEach((src, index) => {
   gallery.appendChild(section);
 });
 
-// --- 3️⃣ Scroll-Effekt (Desktop + Mobile) ---
+// --- 3️⃣ Scroll-Effekt für alle Geräte ---
 const slides = document.querySelectorAll(".slide");
 const total = slides.length;
 
-// Body-Höhe für Scroll
+// Body-Höhe dynamisch setzen
 document.body.style.height = `${total * 100}vh`;
 
 window.addEventListener("scroll", () => {
@@ -44,11 +44,9 @@ window.addEventListener("scroll", () => {
       // Bild von unten nach oben abschneiden
       slide.style.clipPath = `inset(0 0 ${local * 100}% 0)`;
     } else if (progress > end) {
-      // Bild vollständig abgeschnitten
-      slide.style.clipPath = "inset(0 0 100% 0)";
+      slide.style.clipPath = "inset(0 0 100% 0)"; // Bild vollständig abgeschnitten
     } else {
-      // Bild komplett sichtbar
-      slide.style.clipPath = "inset(0 0 0 0)";
+      slide.style.clipPath = "inset(0 0 0 0)"; // Bild komplett sichtbar
     }
   });
 });
