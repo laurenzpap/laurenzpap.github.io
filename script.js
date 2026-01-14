@@ -1,15 +1,17 @@
+// --- 1️⃣ Liste deiner Bilder ---
 const images = [
   "images/01.jpg",
   "images/02.jpg",
   "images/03.jpg"
 ];
 
+// --- 2️⃣ Galerie erstellen ---
 const gallery = document.getElementById("gallery");
 
-// Z-Index: erstes Bild oben
 images.forEach((src, index) => {
   const section = document.createElement("section");
   section.className = "slide";
+  // Z-Index: erstes Bild oben
   section.style.zIndex = images.length - index;
 
   const img = document.createElement("img");
@@ -19,32 +21,34 @@ images.forEach((src, index) => {
   gallery.appendChild(section);
 });
 
-const isDesktop = window.matchMedia("(min-width: 768px)").matches;
+// --- 3️⃣ Scroll-Effekt (Desktop + Mobile) ---
+const slides = document.querySelectorAll(".slide");
+const total = slides.length;
 
-if (isDesktop) {
-  const slides = document.querySelectorAll(".slide");
-  const total = slides.length;
+// Body-Höhe für Scroll
+document.body.style.height = `${total * 100}vh`;
 
-  document.body.style.height = `${total * 100}vh`;
+window.addEventListener("scroll", () => {
+  const scrollY = window.scrollY;
+  const maxScroll = document.body.scrollHeight - window.innerHeight;
+  const progress = scrollY / maxScroll;
 
-  window.addEventListener("scroll", () => {
-    const scrollY = window.scrollY;
-    const maxScroll = document.body.scrollHeight - window.innerHeight;
-    const progress = scrollY / maxScroll;
+  slides.forEach((slide, i) => {
+    const start = i / total;
+    const end = (i + 1) / total;
 
-    slides.forEach((slide, i) => {
-      const start = i / total;
-      const end = (i + 1) / total;
-
-      if (progress >= start && progress <= end) {
-        const local = (progress - start) / (end - start);
-        // 🔹 bottom-Wert wächst mit Scroll, top = 0
-        slide.style.clipPath = `inset(0 0 ${local * 100}% 0)`;
-      } else if (progress > end) {
-        slide.style.clipPath = "inset(0 0 100% 0)";
-      } else {
-        slide.style.clipPath = "inset(0 0 0 0)";
-      }
-    });
+    if (progress >= start && progress <= end) {
+      // local = 0 → Bild komplett sichtbar
+      // local = 1 → Bild komplett abgeschnitten
+      const local = (progress - start) / (end - start);
+      // Bild von unten nach oben abschneiden
+      slide.style.clipPath = `inset(0 0 ${local * 100}% 0)`;
+    } else if (progress > end) {
+      // Bild vollständig abgeschnitten
+      slide.style.clipPath = "inset(0 0 100% 0)";
+    } else {
+      // Bild komplett sichtbar
+      slide.style.clipPath = "inset(0 0 0 0)";
+    }
   });
-}
+});
