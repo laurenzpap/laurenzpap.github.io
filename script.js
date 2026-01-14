@@ -36,7 +36,7 @@ if (isDesktop) {
 
       if (progress >= start && progress <= end) {
         const local = (progress - start) / (end - start);
-        slide.style.clipPath = `inset(${local * 100}% 0 0 0)`;
+        slide.style.clipPath = `inset(0 0 ${ (1 - local) * 100 }% 0)`;
       } else if (progress > end) {
         slide.style.clipPath = "inset(100% 0 0 0)";
       } else {
