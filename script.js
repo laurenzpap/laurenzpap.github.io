@@ -1,5 +1,4 @@
-// --- 1️⃣ Liste deiner Bilder ---
-// Passe hier die Dateinamen an (01.jpg, 02.jpg, ...)
+// --- 1️⃣ Bilderliste ---
 const images = [
   "images/01.jpg",
   "images/02.jpg",
@@ -9,9 +8,11 @@ const images = [
 // --- 2️⃣ Galerie erstellen ---
 const gallery = document.getElementById("gallery");
 
-images.forEach(src => {
+images.forEach((src, index) => {
   const section = document.createElement("section");
   section.className = "slide";
+  // erstes Bild unten, letztes oben
+  section.style.zIndex = images.length - index;
 
   const img = document.createElement("img");
   img.src = src;
@@ -20,18 +21,15 @@ images.forEach(src => {
   gallery.appendChild(section);
 });
 
-// --- 3️⃣ Prüfen, ob Desktop ---
-// Desktop = min-width 768px
+// --- 3️⃣ Desktop-Check ---
 const isDesktop = window.matchMedia("(min-width: 768px)").matches;
 
 if (isDesktop) {
   const slides = document.querySelectorAll(".slide");
   const total = slides.length;
 
-  // Body-Höhe anpassen für Scroll
   document.body.style.height = `${total * 100}vh`;
 
-  // Scroll-Event
   window.addEventListener("scroll", () => {
     const scrollY = window.scrollY;
     const maxScroll = document.body.scrollHeight - window.innerHeight;
@@ -42,19 +40,17 @@ if (isDesktop) {
       const end = (i + 1) / total;
 
       if (progress >= start && progress <= end) {
-        const local = 1 - (progress - start) / (end - start);
-        // 🔹 Hier: Bild wird von unten nach oben abgeschnitten
-        slide.style.clipPath = `inset(0 0 ${ (1 - local) * 100 }% 0)`;
+        // --- lokale Progress berechnen (0 -> unten, 1 -> oben)
+        const local = (progress - start) / (end - start);
+        // Bild von unten nach oben abschneiden
+        slide.style.clipPath = `inset(${local * 100}% 0 0 0)`;
       } else if (progress > end) {
-        // Nach dem Scroll komplett angezeigt (oben + unten sichtbar)
-        slide.style.clipPath = "inset(0 0 0 0)";
+        slide.style.clipPath = "inset(100% 0 0 0)"; // vollständig abgeschnitten
       } else {
-        // Vor dem Scroll komplett abgeschnitten (unten alles verborgen)
-        slide.style.clipPath = "inset(0 0 100% 0)";
+        slide.style.clipPath = "inset(0 0 0 0)"; // komplett sichtbar
       }
     });
   });
 }
 
-// --- 4️⃣ Mobile: keine extra Logik nötig ---
-// CSS scroll-snap sorgt für Fullscreen-Slides
+// Mobile: scroll-snap übernimmt die Fullscreen-Logik
