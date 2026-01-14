@@ -1,52 +1,46 @@
-// --- 1️⃣ Liste deiner Bilder ---
-const images = [
-  "images/01.jpg",
-  "images/02.jpg",
-  "images/03.jpg"
-];
+const slides = document.querySelectorAll('.slide');
+const totalSlides = slides.length;
 
-// --- 2️⃣ Galerie erstellen ---
-const gallery = document.getElementById("gallery");
+// iOS-sichere Viewport-Höhe
+function getViewportHeight() {
+  return window.visualViewport
+    ? window.visualViewport.height
+    : window.innerHeight;
+}
 
-images.forEach((src, index) => {
-  const section = document.createElement("section");
-  section.className = "slide";
-  // Z-Index: erstes Bild oben
-  section.style.zIndex = images.length - index;
+let viewportHeight = getViewportHeight();
 
-  const img = document.createElement("img");
-  img.src = src;
-  section.appendChild(img);
-
-  gallery.appendChild(section);
+// Update bei Rotation / Resize (wichtig für iOS)
+window.addEventListener('resize', () => {
+  viewportHeight = getViewportHeight();
 });
 
-// --- 3️⃣ Scroll-Effekt für alle Geräte ---
-const slides = document.querySelectorAll(".slide");
-const total = slides.length;
-
-// Body-Höhe dynamisch setzen
-document.body.style.height = `${total * 100}vh`;
-
-window.addEventListener("scroll", () => {
+// Haupt-Update-Loop (kein Scroll-Event → smoother)
+function update() {
   const scrollY = window.scrollY;
-  const maxScroll = document.body.scrollHeight - window.innerHeight;
-  const progress = scrollY / maxScroll;
 
-  slides.forEach((slide, i) => {
-    const start = i / total;
-    const end = (i + 1) / total;
+  // Maximale Scroll-Distanz: 1 Viewport pro Bild
+  const maxScroll = viewportHeight * (totalSlides - 1);
 
-    if (progress >= start && progress <= end) {
-      // local = 0 → Bild komplett sichtbar
-      // local = 1 → Bild komplett abgeschnitten
-      const local = (progress - start) / (end - start);
-      // Bild von unten nach oben abschneiden
-      slide.style.clipPath = `inset(0 0 ${local * 100}% 0)`;
-    } else if (progress > end) {
-      slide.style.clipPath = "inset(0 0 100% 0)"; // Bild vollständig abgeschnitten
-    } else {
-      slide.style.clipPath = "inset(0 0 0 0)"; // Bild komplett sichtbar
-    }
+  // Clamp → verhindert Overshoot durch iOS Momentum
+  const clampedScroll = Math.max(0, Math.min(scrollY, maxScroll));
+
+  // Globaler Fortschritt (z. B. 1.3 = Bild 1 → 2, 30%)
+  const progress = clampedScroll / viewportHeight;
+
+  slides.forEach((slide, index) => {
+    // Lokaler Fortschritt pro Slide (0 → 1)
+    const localProgress = Math.min(
+      1,
+      Math.max(0, progress - index)
+    );
+
+    // Von UNTEN nach OBEN abschneiden
+    slide.style.clipPath = `inset(0 0 ${ (1 - localProgress) * 100 }% 0)`;
   });
-});
+
+  requestAnimationFrame(update);
+}
+
+// Start
+update();
