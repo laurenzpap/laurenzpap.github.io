@@ -42,7 +42,7 @@ if (isDesktop) {
       const end = (i + 1) / total;
 
       if (progress >= start && progress <= end) {
-        const local = (progress - start) / (end - start);
+        const local = 1 - (progress - start) / (end - start);
         // 🔹 Hier: Bild wird von unten nach oben abgeschnitten
         slide.style.clipPath = `inset(0 0 ${ (1 - local) * 100 }% 0)`;
       } else if (progress > end) {
