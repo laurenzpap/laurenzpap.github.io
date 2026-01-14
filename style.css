@@ -1,0 +1,48 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: black;
+  color: white;
+  overflow-x: hidden;
+}
+
+/* MOBILE FIRST */
+
+#gallery {
+  scroll-snap-type: y mandatory;
+}
+
+.slide {
+  height: 100vh;
+  scroll-snap-align: start;
+}
+
+.slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* DESKTOP */
+
+@media (min-width: 768px) {
+  body {
+    height: 300vh;
+  }
+
+  #gallery {
+    position: fixed;
+    inset: 0;
+    scroll-snap-type: none;
+  }
+
+  .slide {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+}
